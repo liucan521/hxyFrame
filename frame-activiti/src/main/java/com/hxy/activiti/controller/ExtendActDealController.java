@@ -268,8 +268,8 @@ public class ExtendActDealController {
      * 下一步流程跳转
      */
     @RequestMapping("nextStep")
-    public String flowInfoTab(String flag , ProcessTaskDto processTaskDto, Model model, HttpServletRequest request,RedirectAttributes attributes){
-        model.addAttribute("flag",flag);
+    public String flowInfoTab(ProcessTaskDto processTaskDto, Model model, HttpServletRequest request,RedirectAttributes attributes){
+
         model.addAttribute("taskDto",processTaskDto);
         attributes.addAttribute("id",processTaskDto.getBusId());
         return processTaskDto.getUrl();

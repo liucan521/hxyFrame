@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.demo.dao.TpromotionexamcaseDao">
+
+
+    <resultMap type="com.hxy.demo.entity.TpromotionexamcaseEntity" id="tpromotionexamcaseMap">
+        <result property="caseId" column="case_id"/>
+        <result property="userId" column="user_id"/>
+        <result property="caseName" column="case_name"/>
+        <result property="caseContent" column="case_content"/>
+        <result property="startTime" column="start_time"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="defid" column="defid"/>
+        <result property="code" column="code"/>
+        <result property="status" column="status"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createId" column="create_id"/>
+        <result property="updateId" column="update_id"/>
+        <result property="updateTime" column="update_time"/>
+        <result property="actResult" column="act_result"/>
+		<result property="startUserId" column="start_user_id"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		case_id, 
+		user_id, 
+		case_name, 
+		case_content, 
+		start_time, 
+		instance_id,
+		defid, 
+		code, 
+		status, 
+		create_time, 
+		create_id, 
+		update_id, 
+		update_time, 
+		act_result,
+		start_user_id
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.demo.entity.TpromotionexamcaseEntity" resultMap="tpromotionexamcaseMap">
+		select
+		<include refid="Base_Column_List" />,
+		(select url from extend_act_nodeset node,act_ru_task a,tpromotionexamcase tcase where node.node_id = a.TASK_DEF_KEY_ and tcase.instance_id = a.PROC_INST_ID_ and tcase.case_id = #{value}) as url
+		from tpromotionexamcase tcase
+		where case_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.hxy.demo.entity.TpromotionexamcaseEntity" resultMap="tpromotionexamcaseMap">
+		select * from tpromotionexamcase as tcase  left join (select  a.name_ AS taskName,a.CREATE_TIME_ AS createTime, a.id_ AS taskId,  a.proc_inst_id_ AS instanceId,fb.defid AS defId,
+		fb.code,fb.act_key AS actKey,fb.bus_id AS busId,
+		(SELECT name FROM extend_act_business ab WHERE fb.act_key=ab.act_key ) AS busName,
+		(SELECT user_name FROM sys_user u WHERE u.id =fb.start_user_Id)AS startUserName,
+		(SELECT user_name FROM sys_user u WHERE u.id =a.ASSIGNEE_ ) AS dealName,
+		(select url from extend_act_nodeset node where node.node_id = a.TASK_DEF_KEY_) as url,
+		(SELECT node_type FROM extend_act_nodeset ns WHERE ns.defid=fb.defid) AS nodeType
+		FROM extend_act_flowbus fb,act_ru_task a
+		WHERE a.proc_inst_id_= fb.instance_id) as ttask on tcase.case_id = ttask.busId
+		<if test="caseName!=null and caseName!=''">
+			AND tcase.case_name LIKE concat('%',#{caseName},'%')
+		</if>
+		ORDER BY tcase.create_time DESC
+	</select>
+
+    <select id="queryListByBean" resultType="com.hxy.demo.entity.TpromotionexamcaseEntity" resultMap="tpromotionexamcaseMap">
+        select
+        <include refid="Base_Column_List" />
+        from tpromotionexamcase
+        WHERE 1=1
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from tpromotionexamcase
+	</select>
+	 
+	<insert id="save" parameterType="com.hxy.demo.entity.TpromotionexamcaseEntity">
+		insert into tpromotionexamcase
+		(
+		<include refid="Base_Column_List" />
+		)
+		values
+		(
+			#{caseId}, 
+			#{userId}, 
+			#{caseName}, 
+			#{caseContent}, 
+			#{startTime}, 
+			#{instanceId},
+			#{defid}, 
+			#{code}, 
+			#{status}, 
+			#{createTime}, 
+			#{createId}, 
+			#{updateId}, 
+			#{updateTime}, 
+			#{actResult}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.hxy.demo.entity.TpromotionexamcaseEntity">
+		update tpromotionexamcase 
+		<set>
+			<if test="userId != null">`user_id` = #{userId}, </if>
+			<if test="caseName != null">`case_name` = #{caseName}, </if>
+			<if test="caseContent != null">`case_content` = #{caseContent}, </if>
+			<if test="startTime != null">`start_time` = #{startTime}, </if>
+			<if test="instanceId != null">`instance_id` = #{instanceId}, </if>
+			<if test="defid != null">`defid` = #{defid}, </if>
+			<if test="code != null">`code` = #{code}, </if>
+			<if test="status != null">`status` = #{status}, </if>
+			<if test="createTime != null">`create_time` = #{createTime}, </if>
+			<if test="createId != null">`create_id` = #{createId}, </if>
+			<if test="updateId != null">`update_id` = #{updateId}, </if>
+			<if test="updateTime != null">`update_time` = #{updateTime}, </if>
+			<if test="actResult != null">`act_result` = #{actResult}</if>
+			<if test="actResult != null">`start_user_id` = #{startUserId}</if>
+		</set>
+		where case_id = #{caseId}
+	</update>
+	
+	<delete id="delete">
+		delete from tpromotionexamcase where case_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from tpromotionexamcase where case_id in 
+		<foreach item="caseId" collection="array" open="(" separator="," close=")">
+			#{caseId}
+		</foreach>
+	</delete>
+
+</mapper>

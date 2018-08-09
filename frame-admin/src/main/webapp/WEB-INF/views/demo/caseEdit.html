@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>代码生成器</title>
+    #parse("sys/header.html")
+
+    <style>
+        /**透明样式，用作设置某元素禁止操作*/
+        .readOnly {
+            background: #fff;
+            filter: alpha(opacity=1);
+            opacity: 0.01;
+            top: 0px;
+            left: 0px;
+            width: 100%;
+            height: 100%;
+            z-index: 100;
+            position: absolute;
+        }
+
+        .red {
+            color: red;
+        }
+
+        a:link {
+            text-decoration: none;
+        }
+
+        a:visited {
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+
+        a:active {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+<div class="main-container" id="main-container">
+    <form class="form-horizontal  bv-form" id="leaveForm">
+        <div style="display: none">
+            <input id="id" name="id"  value="${leave.id}"/>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-12 ">
+                <label class="col-xs-3 control-label no-padding-right"><i class="red"> * </i>晋职考试推荐方案:</label>
+                <div class="col-xs-9">
+							<span class="col-xs-11 block input-icon input-icon-right">
+								<input id="title" name="title" type="text" class="form-control" value=""/>
+							</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-12 ">
+                <label class="col-xs-3 control-label no-padding-right"><i class="red"> * </i>考试推荐规则设定:</label>
+                <div class="col-xs-9">
+							<span class="col-xs-11 block input-icon input-icon-right">
+								<input id="day" name="day" type="text" class="form-control" value=""/>
+							</span>
+                </div>
+            </div>
+        </div>
+        <div class="row" style="margin-left: 40%;padding-bottom: 28px;margin-top: 25px;">
+            <button class="layui-btn" type="button" id="submitBtn">提交</button>
+            <a class="layui-btn layui-btn-normal" href="${webRoot}/demo/leave/list">返 回</a>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-xs-12">
+            <div id="rrapp">
+                <div class="grid-btn">
+                    <div class="form-group col-sm-2">
+                        <input type="text" class="form-control" v-model="q.pName" @keyup.enter="query" placeholder="姓名">
+                    </div>
+                    <button class="layui-btn" id="searchSubmit" @click="query"><i class="layui-icon">&#xe615;</i>查 询
+                    </button>
+                    <!--#if($shiro.hasPermission("sys:generator:code"))-->
+                    <!--<button class="layui-btn" @click="generator" @click="query"><i class="layui-icon">&#xe635;</i>生成代码</button>-->
+                    <!--#end-->
+                </div>
+                <table id="jqGrid"></table>
+                <div id="jqGridPager"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="${rc.contextPath}/statics/js/demo/case.js?_${date.systemTime}"></script>
+</body>
+</html>

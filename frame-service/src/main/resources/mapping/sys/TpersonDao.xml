@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.hxy.sys.dao.TpersonDao">
+
+
+    <resultMap type="com.hxy.sys.entity.TpersonEntity" id="tpersonMap">
+        <result property="pId" column="p_id"/>
+        <result property="name" column="name"/>
+        <result property="card" column="card"/>
+        <result property="age" column="age"/>
+        <result property="birthplace" column="birthplace"/>
+        <result property="education" column="education"/>
+        <result property="pRank" column="p_rank"/>
+        <result property="pPosition" column="p_position"/>
+    </resultMap>
+
+    <sql id="Base_Column_List" >
+		p_id, 
+		name, 
+		card, 
+		age, 
+		birthplace, 
+		education, 
+		p_rank, 
+		p_position
+    </sql>
+
+	<select id="queryObject" resultType="com.hxy.sys.entity.TpersonEntity" resultMap="tpersonMap">
+		select
+		<include refid="Base_Column_List" />
+		from tperson
+		where p_id = #{value}
+	</select>
+
+	<select id="queryList" resultType="com.hxy.sys.entity.TpersonEntity" resultMap="tpersonMap">
+		select
+		<include refid="Base_Column_List" />
+		from tperson
+		where 1=1
+		<if test="name != null and name.trim() != ''">
+			and name like concat('%', #{name}, '%')
+		</if>
+        <choose>
+            <when test="sidx != null and sidx.trim() != ''">
+                order by ${sidx} ${order}
+            </when>
+			<otherwise>
+                order by p_id desc
+			</otherwise>
+        </choose>
+		<if test="offset != null and limit != null">
+			limit #{offset}, #{limit}
+		</if>
+	</select>
+
+    <select id="queryListByBean" resultType="com.hxy.sys.entity.TpersonEntity" resultMap="tpersonMap">
+        select
+        <include refid="Base_Column_List" />
+        from tperson
+        WHERE 1=1
+    </select>
+	
+ 	<select id="queryTotal" resultType="int">
+		select count(*) from tperson
+	</select>
+	 
+	<insert id="save" parameterType="com.hxy.sys.entity.TpersonEntity">
+		insert into tperson
+		(
+			`p_id`, 
+			`name`, 
+			`card`, 
+			`age`, 
+			`birthplace`, 
+			`education`, 
+			`p_rank`, 
+			`p_position`
+		)
+		values
+		(
+			#{pId}, 
+			#{name}, 
+			#{card}, 
+			#{age}, 
+			#{birthplace}, 
+			#{education}, 
+			#{pRank}, 
+			#{pPosition}
+		)
+	</insert>
+	 
+	<update id="update" parameterType="com.hxy.sys.entity.TpersonEntity">
+		update tperson 
+		<set>
+			<if test="name != null">`name` = #{name}, </if>
+			<if test="card != null">`card` = #{card}, </if>
+			<if test="age != null">`age` = #{age}, </if>
+			<if test="birthplace != null">`birthplace` = #{birthplace}, </if>
+			<if test="education != null">`education` = #{education}, </if>
+			<if test="pRank != null">`p_rank` = #{pRank}, </if>
+			<if test="pPosition != null">`p_position` = #{pPosition}</if>
+		</set>
+		where p_id = #{pId}
+	</update>
+	
+	<delete id="delete">
+		delete from tperson where p_id = #{value}
+	</delete>
+	
+	<delete id="deleteBatch">
+		delete from tperson where p_id in 
+		<foreach item="pId" collection="array" open="(" separator="," close=")">
+			#{pId}
+		</foreach>
+	</delete>
+
+</mapper>
